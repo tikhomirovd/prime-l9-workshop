@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Задача для launchd — родного планировщика macOS.
+  Поправить два пути, положить в ~/Library/LaunchAgents/ и включить:
+    launchctl load ~/Library/LaunchAgents/prime-replay.plist
+  Выключить:
+    launchctl unload ~/Library/LaunchAgents/prime-replay.plist
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>prime-replay</string>
+    <key>WorkingDirectory</key>
+    <string>/ПУТЬ/К/prime-l9-workshop</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/ПУТЬ/К/uv</string>
+        <string>run</string>
+        <string>prime</string>
+        <string>replay</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>60</integer>
+    <key>StandardOutPath</key>
+    <string>/ПУТЬ/К/prime-l9-workshop/logs/launchd.log</string>
+    <key>StandardErrorPath</key>
+    <string>/ПУТЬ/К/prime-l9-workshop/logs/launchd.log</string>
+</dict>
+</plist>
