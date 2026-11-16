@@ -2,3 +2,6 @@
 .venv/
 __pycache__/
 .ipynb_checkpoints/
+
+# Настройки этой машины и секреты. В репозиторий идёт только .env.example
+.env

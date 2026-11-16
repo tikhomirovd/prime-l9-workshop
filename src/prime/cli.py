@@ -6,7 +6,7 @@
 import argparse
 from datetime import date
 
-from prime import report
+from prime import config, report
 
 
 def main() -> None:
@@ -19,5 +19,6 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    settings = config.load_settings()
     if args.command == "report":
-        print(report.format_report(report.build_day(args.date)))
+        print(report.format_report(report.build_day(args.date, settings)))

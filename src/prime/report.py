@@ -7,13 +7,15 @@
 from datetime import date, timedelta
 
 from prime import data, metrics
+from prime.config import Settings
 
 
-def build_day(report_date: date) -> dict:
+def build_day(report_date: date, settings: Settings) -> dict:
     """Показатели для отчёта: вчерашний день и неделя до него."""
     day = report_date - timedelta(days=1)
-    payments = data.load_payments()
-    subscriptions = data.load_subscriptions()
+    print(f"Настройки: {settings}")
+    payments = data.load_payments(settings.data_dir)
+    subscriptions = data.load_subscriptions(settings.data_dir)
     print(f"Загружено: {len(payments)} платежей, {len(subscriptions)} подписок")
     return {
         "report_date": report_date.isoformat(),
