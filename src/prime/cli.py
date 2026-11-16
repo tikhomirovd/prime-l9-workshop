@@ -1,12 +1,33 @@
 """Командная строка: uv run prime report --date 2026-08-24.
 
-Здесь только разбор аргументов. Считает report.py, данные даёт data.py.
+Здесь разбор аргументов, настройка журнала и перехват ошибок.
+Считает report.py, данные даёт data.py.
 """
 
 import argparse
+import logging
+import sys
 from datetime import date
+from pathlib import Path
 
 from prime import config, report
+
+log = logging.getLogger("prime")
+
+
+def setup_logging(log_file: Path) -> None:
+    """Подробности — в файл. В терминал — только предупреждения и ошибки."""
+    log_file.parent.mkdir(exist_ok=True)
+    to_file = logging.FileHandler(log_file, encoding="utf-8")
+    to_file.setLevel(logging.INFO)
+    to_screen = logging.StreamHandler()
+    to_screen.setLevel(logging.WARNING)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[to_file, to_screen],
+    )
 
 
 def main() -> None:
@@ -20,5 +41,16 @@ def main() -> None:
 
     args = parser.parse_args()
     settings = config.load_settings()
-    if args.command == "report":
-        print(report.format_report(report.build_day(args.date, settings)))
+    setup_logging(settings.log_file)
+    log.info("Запуск: prime %s", " ".join(sys.argv[1:]))
+    log.info("Настройки: %s", settings)
+    try:
+        if args.command == "report":
+            row = report.build_day(args.date, settings)
+            if row is not None:
+                print(report.format_report(row))
+    except Exception:
+        # Без этого ошибка улетит в терминал, которого у запуска по расписанию нет
+        log.exception("Запуск упал")
+        sys.exit(1)
+    log.info("Готово")
