@@ -1,0 +1,4 @@
+# Окружение и кэши у каждого свои, в git им не место
+.venv/
+__pycache__/
+.ipynb_checkpoints/
