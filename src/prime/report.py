@@ -28,10 +28,13 @@ def build_day(report_date: date, settings: Settings) -> dict | None:
         log.warning("Данных за %s нет: снимок заканчивается %s", day, last_day)
         return None
 
+    count, average = metrics.daily_ticket(payments, day)
     row = {
         "report_date": report_date.isoformat(),
         "day": day.isoformat(),
         "revenue_day": metrics.revenue(payments, day, day),
+        "successful_payments": count,
+        "average_payment": average,
         "revenue_7d": metrics.revenue(payments, day - timedelta(days=6), day),
         "new_subscriptions": metrics.new_subscriptions(subscriptions, day),
     }
@@ -47,9 +50,13 @@ def rub(amount: float) -> str:
 def format_report(row: dict) -> str:
     report_date = date.fromisoformat(row["report_date"])
     day = date.fromisoformat(row["day"])
+    average = row["average_payment"]
+    average_text = rub(average) if average is not None else "нет успешных платежей"
     return "\n".join([
         f"ПРАЙМ, отчёт на {report_date:%d.%m.%Y} — данные за {day:%d.%m.%Y}, UTC",
         f"  выручка за день     {rub(row['revenue_day']):>14}",
+        f"  успешных платежей   {row['successful_payments']:>14}",
+        f"  средний платёж      {average_text:>14}",
         f"  выручка за 7 дней   {rub(row['revenue_7d']):>14}",
         f"  новых подписок      {row['new_subscriptions']:>12}",
     ])

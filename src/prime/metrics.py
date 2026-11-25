@@ -22,3 +22,11 @@ def revenue(payments: pd.DataFrame, start: date, end: date) -> float:
 def new_subscriptions(subscriptions: pd.DataFrame, day: date) -> int:
     """Сколько подписок оформлено в этот день."""
     return int((subscriptions["started_at"].dt.date == day).sum())
+
+
+def daily_ticket(payments: pd.DataFrame, day: date) -> tuple[int, float | None]:
+    """Количество успешных платежей и их средняя сумма за день UTC."""
+    today = payments.loc[payments["paid_at"].dt.date == day]
+    successful = today.loc[today["status"] == "success", "amount"]
+    count = len(today)
+    return count, float(successful.sum()) / count if count else None
